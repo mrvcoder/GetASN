@@ -4,7 +4,7 @@
 if [ -z "$1" ]; then
   echo "Error: No input provided."
   echo "usage: ./getasn ListOfUrls.txt "
-  return
+  exit 1
 fi
 
 # Store the file path in a variable

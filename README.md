@@ -1,4 +1,4 @@
-## Tools/Commands need to be installed in your machin
+## Tools/Commands need to be installed in your machine
 | tool | README |
 | ------ | ------ |
 | mapcidr | [https://github.com/projectdiscovery/mapcidr][PlDb] |

@@ -1,4 +1,14 @@
-# GetASN
-this script will give you the asn,ip of list of urls 
-note that your urls should not have the https:// or http:// and etc schem
-usage getasn.sh ListOfUrls.txt
+## Tools/Commands need to be installed in your machin
+| tool | README |
+| ------ | ------ |
+| mapcidr | [https://github.com/projectdiscovery/mapcidr][PlDb] |
+| httpx | [https://github.com/projectdiscovery/httpx][PlGh] |
+
+## Usage
+
+usage: ./getasn.sh [options] ListOfUrls.txt 
+options:
+  -l => get all live ips of asns that find with this tool
+example
+./getasn.sh -l ListOfUrls.txt
+./getasn.sh  ListOfUrls.txt

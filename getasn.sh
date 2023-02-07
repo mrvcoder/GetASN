@@ -17,7 +17,7 @@ if [ "$live_mode" == "1" ]; then
   # usage : getasn ListofUrls.txt
   if [ -z "$2" ]; then
     echo "Error: No input provided."
-    echo "usage: ./getasn.sh [options] ListOfUrls.txt "
+    echo "usage: ./getasn.sh [options] ListOfDomains.txt "
     echo "options:
     -l => get all live ips of asns that find with this tool"
     exit 1
@@ -38,7 +38,7 @@ else
  # usage : getasn ListofUrls.txt
   if [ -z "$1" ]; then
     echo "Error: No input provided."
-    echo "usage: ./getasn.sh [options] ListOfUrls.txt "
+    echo "usage: ./getasn.sh [options] ListOfDomains.txt "
     echo "options:
     -l => get all live ips of asns that find with this tool"
     exit 1

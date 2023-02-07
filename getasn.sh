@@ -97,7 +97,7 @@ if [ "$live_mode" == "1" ]; then
     # Run the desired command for each ASN
     result=$(whois -h whois.radb.net -- "-i origin AS$asn" | grep -Eo "([0-9.]+){4}/[0-9]+" | uniq | mapcidr -silent | httpx)
     echo "created file $asn.live.ips.txt"
-    echo "$result" > $asn.live.ips.txt
+    echo $result > $asn.live.ips.txt
   done
   echo "========================="
   echo "Done!" 

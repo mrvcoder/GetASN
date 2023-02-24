@@ -66,14 +66,19 @@ fi
 
 # Initialize the JSON object
 json='{"urls":[]}'
+api_key="YOUR_API_KEY"
 
+if [ "$api_key" == "YOUR_API_KEY" ]; then
+    echo "Please set your api key for https://ipdata.co"
+    exit 1
+fi
 # Loop through the URLs in the file
 while read -r domain; do
   # Get the IP address of the URL
   ip=$(ping -c 1 "$domain" | grep -oP '\(\K[^\)]+' | head -n 1)
 
   # Use the ipdata.co API to look up information about the IP address
-  api_response=$(curl -s "https://api.ipdata.co/${ip}?api-key=YOUR_API_KEY")
+  api_response=$(curl -s "https://api.ipdata.co/${ip}?api-key=${api_key}")
   
   # Check if the IP address is associated with a CDN
   is_cdn=$(echo $api_response | jq -r '.company.type')

@@ -17,7 +17,7 @@ if [ "$live_mode" == "1" ]; then
   # usage : getasn ListofUrls.txt
   if [ -z "$2" ]; then
     echo "Error: No input provided."
-    echo "usage: ./getasn.sh [options] ListOfDomains.txt "
+    echo "usage: ./getasn.sh [options] ListOfUrls.txt "
     echo "options:
     -l => get all live ips of asns that find with this tool"
     exit 1
@@ -38,7 +38,7 @@ else
  # usage : getasn ListofUrls.txt
   if [ -z "$1" ]; then
     echo "Error: No input provided."
-    echo "usage: ./getasn.sh [options] ListOfDomains.txt "
+    echo "usage: ./getasn.sh [options] ListOfUrls.txt "
     echo "options:
     -l => get all live ips of asns that find with this tool"
     exit 1
@@ -68,16 +68,30 @@ fi
 json='{"urls":[]}'
 
 # Loop through the URLs in the file
-while read -r url; do
+while read -r domain; do
   # Get the IP address of the URL
-  ip=$(nslookup "$url" | awk '/^Address: / { print $2 }')
+  ip=$(ping -c 1 "$domain" | grep -oP '\(\K[^\)]+' | head -n 1)
+
+  # Use the ipdata.co API to look up information about the IP address
+  api_response=$(curl -s "https://api.ipdata.co/${ip}?api-key=YOUR_API_KEY")
+  
+  # Check if the IP address is associated with a CDN
+  is_cdn=$(echo $api_response | jq -r '.company.type')
+
+  if [ "$is_cdn" == "cdn" ]; then
+      is_cdn=true
+  elif [ "$is_cdn" == "null" ]; then
+      is_cdn="NULL! (maybe api.ipdata.co has some errors)"
+  else
+      is_cdn=false
+  fi
 
   # Get the ASN information for the IP address
   asn=$(whois  -h whois.cymru.com "-v $ip" | awk '{print $1}' | tail -1 | sed 's/AS//g')
 
   # Append the information to the output file
   # Add the URL, IP, and ASN to the JSON object
-  json=$(echo $json | jq --arg url "$url" --arg ip "$ip" --arg asn "$asn" '.urls += [{"url":$url,"ip":$ip,"asn":$asn}]')
+  json=$(echo $json | jq --arg url "$domain" --arg ip "$ip" --arg asn "$asn" --arg is_cdn "$is_cdn" '.urls += [{"url":$url,"ip":$ip,"asn":$asn,"is_cdn",$is_cdn}]')
 done < "$input_file"
 # Write the JSON object to the output file
 echo $json | jq . > "$output_file"
@@ -91,7 +105,7 @@ echo "Done! The output has been saved in $output_file :)"
 if [ "$live_mode" == "1" ]; then
   # Loop through the ASNs in the file
   # Get the unique ASN values from the JSON file
-  asns=$(cat output.json | jq '.urls[].asn' -r | sort -u)
+  asns=$(cat output.json | jq '.urls[] | select(.is_cdn == "false") | .asn' | sort -u)
   # Loop through each ASN value
   for asn in $asns; do
     # Run the desired command for each ASN

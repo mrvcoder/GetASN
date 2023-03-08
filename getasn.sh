@@ -81,7 +81,7 @@ while read -r domain; do
   api_response=$(curl -s "https://api.ipdata.co/${ip}?api-key=${api_key}")
   
   # Check if the IP address is associated with a CDN
-  is_cdn=$(echo $api_response | jq -r '.company.type')
+  is_cdn=$(echo $api_response | jq -r '.asn.type')
 
   if [ "$is_cdn" == "cdn" ]; then
       is_cdn=true

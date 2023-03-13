@@ -58,20 +58,31 @@ fi
 
 # Define the output file for the JSON object
 output_file="output.json"
+output_file_same_asn="output_SameASN_NotCDN.json"
+output_file_not_cdn="output_NotCDN.json"
 
 # Remove the output file if it already exists
 if [ -f "$output_file" ]; then
   rm "$output_file"
 fi
 
+if [ -f "$output_file_same_asn" ]; then
+  rm "$output_file_same_asn"
+fi
+
+if [ -f "$output_file_not_cdn" ]; then
+  rm "$output_file_not_cdn"
+fi
+
 # Initialize the JSON object
 json='{"urls":[]}'
-api_key="YOUR_API_KEY"
+api_key="6bffb7823d070a69fb8bfccb72d0185f09ef72ed6c6c2b828af0cb11"
 
 if [ "$api_key" == "YOUR_API_KEY" ]; then
     echo "Please set your api key for https://ipdata.co"
     exit 1
 fi
+
 # Loop through the URLs in the file
 while read -r domain; do
   # Get the IP address of the URL
@@ -98,13 +109,18 @@ while read -r domain; do
   # Add the URL, IP, and ASN to the JSON object
   json=$(echo $json | jq --arg url "$domain" --arg ip "$ip" --arg asn "$asn" --arg is_cdn "$is_cdn" '.urls += [{"url":$url,"ip":$ip,"asn":$asn,"is_cdn",$is_cdn}]')
 done < "$input_file"
+
+
+
 # Write the JSON object to the output file
-echo $json | jq . > "$output_file"
+echo $json | jq . > $output_file
+echo $json | jq '{ "urls": [.urls[] | select(.is_cdn == "false")]}' > $output_file_not_cdn 
+echo $json | jq '.urls | group_by(.asn) | map(select(length > 1) | map(select(.is_cdn == "false"))) | flatten' > $output_file_same_asn
 echo "========================="
-cat $output_file
+cat $output_file | jq .
 echo "========================="
 echo "Twitter: https://twitter.com/VC0D3R | Github : https://github.com/mrvcoder "
-echo "Done! The output has been saved in $output_file :)"
+echo -e "Done! The ORGINAL output has been saved in $output_file \nAND the output which ASNs are equal and is_cdn is false saved at $output_file_same_asn \nAND the output which is_cdn is false is saved at $output_file_not_cdn :)"
 
 # Check if live mode was enabled
 if [ "$live_mode" == "1" ]; then

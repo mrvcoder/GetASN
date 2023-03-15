@@ -76,7 +76,7 @@ fi
 
 # Initialize the JSON object
 json='{"urls":[]}'
-api_key="YOUR_API_KEY"
+api_key="6bffb7823d070a69fb8bfccb72d0185f09ef72ed6c6c2b828af0cb11"
 
 if [ "$api_key" == "YOUR_API_KEY" ]; then
     echo "Please set your api key for https://ipdata.co"
@@ -86,7 +86,7 @@ fi
 # Loop through the URLs in the file
 while read -r domain; do
   # Get the IP address of the URL
-  ips=$(dig A ablink.ae.linktr.ee @8.8.8.8 +short | grep -E '^[0-9]')
+  ips=$(dig A $domain @8.8.8.8 +short | grep -E '^[0-9]')
 
   for ip in $ips
   do

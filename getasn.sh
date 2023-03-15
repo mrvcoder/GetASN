@@ -76,7 +76,7 @@ fi
 
 # Initialize the JSON object
 json='{"urls":[]}'
-api_key="6bffb7823d070a69fb8bfccb72d0185f09ef72ed6c6c2b828af0cb11"
+api_key="YOUR_API_KEY"
 
 if [ "$api_key" == "YOUR_API_KEY" ]; then
     echo "Please set your api key for https://ipdata.co"

@@ -57,9 +57,9 @@ else
 fi
 
 # Define the output file for the JSON object
-output_file="output.json"
-output_file_same_asn="output_SameASN_NotCDN.json"
-output_file_not_cdn="output_NotCDN.json"
+output_file="getasn_output.json"
+output_file_same_asn="getasn_output_SameASN_NotCDN.json"
+output_file_not_cdn="getasn_output_NotCDN.json"
 
 # Remove the output file if it already exists
 if [ -f "$output_file" ]; then
@@ -76,40 +76,51 @@ fi
 
 # Initialize the JSON object
 json='{"urls":[]}'
-api_key="6bffb7823d070a69fb8bfccb72d0185f09ef72ed6c6c2b828af0cb11"
+api_keys=("YOUR_API_KEY" "second api key")
 
-if [ "$api_key" == "YOUR_API_KEY" ]; then
+if [ ${api_keys[0]} == "YOUR_API_KEY" ]; then
     echo "Please set your api key for https://ipdata.co"
     exit 1
 fi
 
 # Loop through the URLs in the file
+api_reqs=0
+index=0
 while read -r domain; do
   # Get the IP address of the URL
-  ips=$(dig A $domain @8.8.8.8 +short | grep -E '^[0-9]')
-
+  ips=$(dig A $domain @8.8.8.8 +short | grep -E '^[0-9]+.+')
+  echo $ips , $domain
   for ip in $ips
   do
-    # Use the ipdata.co API to look up information about the IP address
-    api_response=$(curl -s "https://api.ipdata.co/${ip}?api-key=${api_key}")
-    
-    # Check if the IP address is associated with a CDN
-    is_cdn=$(echo $api_response | jq -r '.asn.type')
+      if [ $api_reqs -gt 1499 ]
+      then
+        index=$(($index+1))
+      fi
 
-    if [ "$is_cdn" == "cdn" ]; then
-        is_cdn=true
-    elif [ "$is_cdn" == "null" ]; then
-        is_cdn="NULL! (maybe api.ipdata.co has some errors)"
-    else
-        is_cdn=false
-    fi
+      if [ -n ${api_keys[index]} ]
+      then
+        # Use the ipdata.co API to look up information about the IP address
+        api_response=$(curl -s "https://api.ipdata.co/${ip}?api-key=${api_keys[index]}")
+        api_reqs=$(($api_reqs+1))
 
-    # Get the ASN information for the IP address
-    asn=$(whois  -h whois.cymru.com "-v $ip" | awk '{print $1}' | tail -1 | sed 's/AS//g')
+        # Check if the IP address is associated with a CDN
+        is_cdn=$(echo $api_response | jq -r '.asn.type')
 
-    # Append the information to the output file
-    # Add the URL, IP, and ASN to the JSON object
-    json=$(echo $json | jq --arg url "$domain" --arg ip "$ip" --arg asn "$asn" --arg is_cdn "$is_cdn" '.urls += [{"url":$url,"ip":$ip,"asn":$asn,"is_cdn",$is_cdn}]')
+        if [ "$is_cdn" == "cdn" ]; then
+            is_cdn=true
+        elif [ "$is_cdn" == "null" ]; then
+            is_cdn="NULL! (maybe api.ipdata.co has some errors)"
+        else
+            is_cdn=false
+        fi
+
+        # Get the ASN information for the IP address
+        asn=$(whois  -h whois.cymru.com "-v $ip" | awk '{print $1}' | tail -1 | sed 's/AS//g')
+
+        # Append the information to the output file
+        # Add the URL, IP, and ASN to the JSON object
+        json=$(echo $json | jq --arg url "$domain" --arg ip "$ip" --arg asn "$asn" --arg is_cdn "$is_cdn" '.urls += [{"url":$url,"ip":$ip,"asn":$asn,"is_cdn",$is_cdn}]')
+      fi
   done
   
 done < "$input_file"

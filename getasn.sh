@@ -137,7 +137,7 @@ echo "========================="
 echo "Twitter: https://twitter.com/VC0D3R | Github : https://github.com/mrvcoder "
 echo -e "Done! The ORGINAL output has been saved in $output_file \nAND the output which ASNs are equal and is_cdn is false saved at $output_file_same_asn \nAND the output which is_cdn is false is saved at $output_file_not_cdn :)"
 
-# Check if live mode was enabled
+# Check if live mode was enabled (soon will be updated !)
 if [ "$live_mode" == "1" ]; then
   # Loop through the ASNs in the file
   # Get the unique ASN values from the JSON file

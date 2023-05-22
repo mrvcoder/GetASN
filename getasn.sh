@@ -1,16 +1,23 @@
 #!/bin/bash
 
 # Define the options that the script accepts
-options=":l"
+options=":lhd"
+dns="8.8.8.8"
 # Parse the options passed to the script
 while getopts "$options" opt; do
   case $opt in
     l ) live_mode=1 ;;
+    h ) echo "usage: ./getasn.sh [options] ListOfUrls.txt "
+    echo "options:
+    -l => get all live ips of asns that find with this tool"
+         exit 1
+         ;;
     \? ) echo "Invalid option: -$OPTARG" 1>&2
          exit 1
          ;;
   esac
 done
+
 
 if [ "$live_mode" == "1" ]; then
 
@@ -76,42 +83,24 @@ fi
 
 # Initialize the JSON object
 json='{"urls":[]}'
-api_keys=("YOUR_API_KEY" "second api key")
 
-if [ ${api_keys[0]} == "YOUR_API_KEY" ]; then
-    echo "Please set your api key for https://ipdata.co"
-    exit 1
-fi
 
 # Loop through the URLs in the file
 api_reqs=0
 index=0
 while read -r domain; do
   # Get the IP address of the URL
-  ips=$(dig A $domain @8.8.8.8 +short | grep -E '^[0-9]+.+')
-  echo $ips , $domain
+  ips=$(dig A $domain @$dns +short | grep -E '^[0-9]+.+'; dig AAAA $domain @$dns +short | grep -E '^[0-9]+.+')
   for ip in $ips
   do
-      if [ $api_reqs -gt 1499 ]
-      then
-        index=$(($index+1))
-      fi
-
-      if [ -n ${api_keys[index]} ]
-      then
-        # Use the ipdata.co API to look up information about the IP address
-        api_response=$(curl -s "https://api.ipdata.co/${ip}?api-key=${api_keys[index]}")
-        api_reqs=$(($api_reqs+1))
-
         # Check if the IP address is associated with a CDN
-        is_cdn=$(echo $api_response | jq -r '.asn.type')
+        is_cdn=$(echo $ip | cut-cdn -silent | wc -l)
 
-        if [ "$is_cdn" == "cdn" ]; then
-            is_cdn=true
-        elif [ "$is_cdn" == "null" ]; then
-            is_cdn="NULL! (maybe api.ipdata.co has some errors)"
+        if [ $is_cdn == "0" ]
+        then
+             is_cdn=true
         else
-            is_cdn=false
+             is_cdn=false
         fi
 
         # Get the ASN information for the IP address
@@ -120,7 +109,6 @@ while read -r domain; do
         # Append the information to the output file
         # Add the URL, IP, and ASN to the JSON object
         json=$(echo $json | jq --arg url "$domain" --arg ip "$ip" --arg asn "$asn" --arg is_cdn "$is_cdn" '.urls += [{"url":$url,"ip":$ip,"asn":$asn,"is_cdn",$is_cdn}]')
-      fi
   done
   
 done < "$input_file"
@@ -135,7 +123,7 @@ echo "========================="
 cat $output_file | jq .
 echo "========================="
 echo "Twitter: https://twitter.com/VC0D3R | Github : https://github.com/mrvcoder "
-echo -e "Done! The ORGINAL output has been saved in $output_file \nAND the output which ASNs are equal and is_cdn is false saved at $output_file_same_asn \nAND the output which is_cdn is false is saved at $output_file_not_cdn :)"
+echo -e "Done! \nOutPuts: $output_file - $output_file_same_asn - $output_file_not_cdn :)"
 
 # Check if live mode was enabled
 if [ "$live_mode" == "1" ]; then

@@ -21,10 +21,10 @@ done
 
 if [ "$live_mode" == "1" ]; then
 
-  # usage : getasn ListofDomains.txt
+  # usage : getasn ListofUrls.txt
   if [ -z "$2" ]; then
     echo "Error: No input provided."
-    echo "usage: ./getasn.sh [options] ListofDomains.txt "
+    echo "usage: ./getasn.sh [options] ListOfUrls.txt "
     echo "options:
     -l => get all live ips of asns that find with this tool"
     exit 1
@@ -45,7 +45,7 @@ else
  # usage : getasn ListofUrls.txt
   if [ -z "$1" ]; then
     echo "Error: No input provided."
-    echo "usage: ./getasn.sh [options] ListofDomains.txt "
+    echo "usage: ./getasn.sh [options] ListOfUrls.txt "
     echo "options:
     -l => get all live ips of asns that find with this tool"
     exit 1
@@ -125,7 +125,7 @@ echo "========================="
 echo "Twitter: https://twitter.com/VC0D3R | Github : https://github.com/mrvcoder "
 echo -e "Done! \nOutPuts: $output_file - $output_file_same_asn - $output_file_not_cdn :)"
 
-# Check if live mode was enabled (soon will be updated !)
+# Check if live mode was enabled
 if [ "$live_mode" == "1" ]; then
   # Loop through the ASNs in the file
   # Get the unique ASN values from the JSON file

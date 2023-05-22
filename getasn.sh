@@ -33,7 +33,6 @@ done
     exit 1
   fi
 
-fi
 
 # Define the output file for the JSON object
 output_file="getasn_output.json"

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the options that the script accepts
-options=":h"
+options=":h:d:"
 dns="8.8.8.8"
 # Parse the options passed to the script
 while getopts "$options" opt; do
@@ -9,12 +9,12 @@ while getopts "$options" opt; do
     h ) echo "usage: ./getasn.sh [options] ListOfDomains.txt "
          exit 1
          ;;
+    d ) dns=$OPTARG;;
     \? ) echo "Invalid option: -$OPTARG" 1>&2
          exit 1
          ;;
   esac
 done
-
 
  # usage : getasn ListOfDomains.txt
   if [ -z "$1" ]; then
@@ -66,6 +66,8 @@ while read -r domain; do
   do
         # Check if the IP address is associated with a CDN
         is_cdn=$(echo $ip | cut-cdn -silent | wc -l)
+        cidr=$(curl -s https://api.bgpview.io/ip/$ip | jq -r ".data.prefixes[] | .prefix" -r)
+        asn=$(curl -s https://api.bgpview.io/ip/188.114.97.7 | jq -r ".data.prefixes[] | .asn.asn" -r)
 
         if [ $is_cdn == "0" ]
         then
@@ -74,12 +76,11 @@ while read -r domain; do
              is_cdn=false
         fi
 
-        # Get the ASN information for the IP address
-        asn=$(whois  -h whois.cymru.com "-v $ip" | awk '{print $1}' | tail -1 | sed 's/AS//g')
+      
 
         # Append the information to the output file
         # Add the URL, IP, and ASN to the JSON object
-        json=$(echo $json | jq --arg url "$domain" --arg ip "$ip" --arg asn "$asn" --arg is_cdn "$is_cdn" '.urls += [{"url":$url,"ip":$ip,"asn":$asn,"is_cdn",$is_cdn}]')
+        json=$(echo $json | jq --arg url "$domain" --arg ip "$ip" --arg asn "$asn" --arg is_cdn "$is_cdn" --arg cidr "$cidr" '.urls += [{"url":$url,"ip":$ip,"asn":$asn,"is_cdn":$is_cdn,"cidr":$cidr}]')
   done
   
 done < "$input_file"

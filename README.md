@@ -6,7 +6,7 @@
 ## what does this script do?
 this script will give you these infoes :
 - **ASN**: asn number of domain
-- **IP**: ipv4s of domain (get from dig)
+- **IP**: IPs of domain (supports ipv4 and ipv6)
 - **is_cdn**: is domain behind cdn or not (true or false) 
 - **CIDR**: prefex of ip (cidr)
 

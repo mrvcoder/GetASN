@@ -67,8 +67,8 @@ while read -r domain; do
         # Check if the IP address is associated with a CDN
         is_cdn=$(echo $ip | cut-cdn -silent | wc -l)
         cidr=$(curl -s https://api.bgpview.io/ip/$ip | jq -r ".data.prefixes[] | .prefix" -r)
-        asn=$(curl -s https://api.bgpview.io/ip/188.114.97.7 | jq -r ".data.prefixes[] | .asn.asn" -r)
-
+        asn=$(curl -s https://api.bgpview.io/ip/$ip | jq -r ".data.prefixes[] | .asn.asn" -r)
+        name=$(curl -s https://api.bgpview.io/asn/$asn | jq -r ".data .name")
         if [ $is_cdn == "0" ]
         then
              is_cdn=true
@@ -80,7 +80,7 @@ while read -r domain; do
 
         # Append the information to the output file
         # Add the URL, IP, and ASN to the JSON object
-        json=$(echo $json | jq --arg url "$domain" --arg ip "$ip" --arg asn "$asn" --arg is_cdn "$is_cdn" --arg cidr "$cidr" '.urls += [{"url":$url,"ip":$ip,"asn":$asn,"is_cdn":$is_cdn,"cidr":$cidr}]')
+        json=$(echo $json | jq --arg url "$domain" --arg ip "$ip" --arg asn "$asn" --arg is_cdn "$is_cdn" --arg cidr "$cidr" --arg name "$name" '.urls += [{"url":$url,"ip":$ip,"asn":$asn,"is_cdn":$is_cdn,"cidr":$cidr,"name":$name}]')
   done
   
 done < "$input_file"

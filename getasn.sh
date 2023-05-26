@@ -80,7 +80,7 @@ while read -r domain; do
 
         # Append the information to the output file
         # Add the URL, IP, and ASN to the JSON object
-        json=$(echo $json | jq --arg url "$domain" --arg ip "$ip" --arg asn "$asn" --arg is_cdn "$is_cdn" --arg cidr "$cidr" --arg name "$name" '.urls += [{"url":$url,"ip":$ip,"asn":$asn,"is_cdn":$is_cdn,"cidr":$cidr,"name":$name}]')
+        json=$(echo $json | jq --arg domain "$domain" --arg ip "$ip" --arg asn "$asn" --arg is_cdn "$is_cdn" --arg cidr "$cidr" --arg name "$name" '.domains += [{"domain":$url,"ip":$ip,"asn":$asn,"is_cdn":$is_cdn,"cidr":$cidr,"name":$name}]')
   done
   
 done < "$input_file"
@@ -89,8 +89,8 @@ done < "$input_file"
 
 # Write the JSON object to the output file
 echo $json | jq . > $output_file
-echo $json | jq '{ "urls": [.urls[] | select(.is_cdn == "false")]}' > $output_file_not_cdn 
-echo $json | jq '.urls | group_by(.asn) | map(select(length > 1) | map(select(.is_cdn == "false"))) | flatten' > $output_file_same_asn
+echo $json | jq '{ "domains": [.urls[] | select(.is_cdn == "false")]}' > $output_file_not_cdn 
+echo $json | jq '.domains | group_by(.asn) | map(select(length > 1) | map(select(.is_cdn == "false"))) | flatten' > $output_file_same_asn
 echo "========================="
 cat $output_file | jq .
 echo "========================="

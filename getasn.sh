@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Define the options that the script accepts
-options=":h:d:"
+options=":hd:"
 dns="8.8.8.8"
 # Parse the options passed to the script
 while getopts "$options" opt; do
   case $opt in
-    h ) echo "usage: ./getasn.sh [options] ListOfDomains.txt "
+    h ) echo "usage: ./getasn.sh [options] ListOfDomains.txt \n -d Set dns server "
          exit 1
          ;;
     d ) dns=$OPTARG;;

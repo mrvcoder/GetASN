@@ -6,15 +6,19 @@ dns="./resolvers.txt"
 # Parse the options passed to the script
 while getopts "$options" opt; do
   case $opt in
-    h ) echo "usage: ./getasn.sh [options] ListOfDomains.txt \n -d Set txt resolvers file address "
+    h ) 
+         echo "usage: ./getasn.sh [options] ListOfDomains.txt"
+         echo " -d Set txt resolvers file address "
          exit 1
          ;;
-    d ) dns=$OPTARG;;
+    d ) dns="$OPTARG"
+        ;;
     \? ) echo "Invalid option: -$OPTARG" 1>&2
          exit 1
          ;;
   esac
 done
+shift $(( OPTIND - 1 ))
 
  # usage : getasn ListOfDomains.txt
   if [ -z "$1" ]; then

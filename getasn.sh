@@ -65,7 +65,7 @@ while read -r domain; do
   for ip in $ips
   do
         # Check if the IP address is associated with a CDN
-        is_cdn=$(echo $ip | cut-cdn -silent | wc -l)
+        is_cdn=$(echo $ip | cut-cdn -silent -t 3 | wc -l)
         cidr=$(curl -s https://api.bgpview.io/ip/$ip | jq -r ".data.prefixes[] | .prefix" -r)
         asn=$(curl -s https://api.bgpview.io/ip/$ip | jq -r ".data.prefixes[] | .asn.asn" -r)
         name=$(curl -s https://api.bgpview.io/asn/$asn | jq -r ".data .name")

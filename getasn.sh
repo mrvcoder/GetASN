@@ -2,11 +2,11 @@
 
 # Define the options that the script accepts
 options=":hd:"
-dns="8.8.8.8"
+dns="./resolvers.txt"
 # Parse the options passed to the script
 while getopts "$options" opt; do
   case $opt in
-    h ) echo "usage: ./getasn.sh [options] ListOfDomains.txt \n -d Set dns server "
+    h ) echo "usage: ./getasn.sh [options] ListOfDomains.txt \n -d Set txt resolvers file address "
          exit 1
          ;;
     d ) dns=$OPTARG;;
@@ -61,7 +61,7 @@ api_reqs=0
 index=0
 while read -r domain; do
   # Get the IP address of the URL
-  ips=$(dig A $domain @$dns +short | grep -E '^[0-9]+.+'; dig AAAA $domain @$dns +short | grep -E '^[0-9]+.+')
+  ips=$(echo $domain | dnsx -a -aaaa -resp-only -silent -r $dns -retry 3 -t 150)
   for ip in $ips
   do
         # Check if the IP address is associated with a CDN

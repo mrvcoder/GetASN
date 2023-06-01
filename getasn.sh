@@ -53,7 +53,7 @@ if [ -f "$output_file_not_cdn" ]; then
 fi
 
 # Initialize the JSON object
-json='{"urls":[]}'
+json='{"domains":[]}'
 
 
 # Loop through the URLs in the file
@@ -89,7 +89,7 @@ done < "$input_file"
 
 # Write the JSON object to the output file
 echo $json | jq . > $output_file
-echo $json | jq '{ "domains": [.urls[] | select(.is_cdn == "false")]}' > $output_file_not_cdn 
+echo $json | jq '{ ".domains": [.domains[] | select(.is_cdn == "false")]}' > $output_file_not_cdn 
 echo $json | jq '.domains | group_by(.asn) | map(select(length > 1) | map(select(.is_cdn == "false"))) | flatten' > $output_file_same_asn
 echo "========================="
 cat $output_file | jq .

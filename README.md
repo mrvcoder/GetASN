@@ -2,6 +2,7 @@
 | tool | README |
 | ------ | ------ |
 | cut-cdn | [https://github.com/ImAyrix/cut-cdn] |
+| dnsx | [https://github.com/projectdiscovery/dnsx] |
 
 ## what does this script do?
 this script will give you these infoes :

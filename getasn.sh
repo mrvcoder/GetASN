@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Define the options that the script accepts
-options=":hd:"
+options=":hds:"
+silent="0"
 dns="./resolvers.txt"
 # Parse the options passed to the script
 while getopts "$options" opt; do
@@ -9,8 +10,11 @@ while getopts "$options" opt; do
     h ) 
          echo "usage: ./getasn.sh [options] ListOfDomains.txt"
          echo " -d Set txt resolvers file address "
-         exit 1
+        echo "-s silent output" 
+        exit 1
          ;;
+    s ) silent="1"
+        ;;
     d ) dns="$OPTARG"
         ;;
     \? ) echo "Invalid option: -$OPTARG" 1>&2
@@ -96,8 +100,12 @@ done < "$input_file"
 echo $json | jq . > $output_file
 echo $json | jq '{ ".domains": [.domains[] | select(.is_cdn == "false")]}' > $output_file_not_cdn 
 echo $json | jq '.domains | group_by(.asn) | map(select(length > 1) | map(select(.is_cdn == "false"))) | flatten' > $output_file_same_asn
-echo "========================="
-cat $output_file | jq .
-echo "========================="
-echo "Twitter: https://twitter.com/VC0D3R | Github : https://github.com/mrvcoder "
-echo -e "Done! \nOutPuts: $output_file - $output_file_same_asn - $output_file_not_cdn :)"
+if [ "$silent" == "1" ]; then
+        echo "========================="
+        cat $output_file | jq .
+        echo "========================="
+        echo "Twitter: https://twitter.com/VC0D3R | Github : https://github.com/mrvcoder "
+        echo -e "Done! \nOutPuts: $output_file - $output_file_same_asn - $output_file_not_cdn :)"
+else
+        echo "Done !"
+fi

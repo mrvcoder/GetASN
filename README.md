@@ -25,7 +25,7 @@ options:
 ```
 **It is Important to use options before ListOfDomains file !**
 
-## how to use this script as alias in bash !
+## How to use this script as alias in bash !
 Add this code to your `~/.bashrc`
 ```
 getasn() {
@@ -42,4 +42,9 @@ source ~/.bashrc
 Now you can call getasn script anywhere in bash !
 And Only need to pass ListOfDomains file. If you need to change resolvers just go to project folder and edit `resolvers.txt` file
 
+
+## How to use with [notify](https://github.com/projectdiscovery/notify)
+```
+./getasn.sh -s ListOfDomains.txt | notify -mf "done" -id discord
+```
 Good luck :)

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the options that the script accepts
-options=":hds:"
+options=":shd:"
 silent="0"
 dns="./resolvers.txt"
 # Parse the options passed to the script

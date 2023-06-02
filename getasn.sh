@@ -58,7 +58,8 @@ fi
 
 # Initialize the JSON object
 json='{"domains":[]}'
-
+# update cut-cdn providers
+cut-cdn -ua
 
 # Loop through the URLs in the file
 api_reqs=0

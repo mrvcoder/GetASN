@@ -70,9 +70,9 @@ while read -r domain; do
   do
         # Check if the IP address is associated with a CDN
         is_cdn=$(echo $ip | cut-cdn -silent -t 3 | wc -l)
-        cidr=$(curl -s https://api.bgpview.io/ip/$ip | jq -r ".data.prefixes[] | .prefix" -r)
-        asn=$(curl -s https://api.bgpview.io/ip/$ip | jq -r ".data.prefixes[] | .asn.asn" -r)
-        name=$(curl -s https://api.bgpview.io/asn/$asn | jq -r ".data .name")
+        cidr=$(curl -s https://api.bgpview.io/ip/$ip | jq -r ".data.prefixes[] | .prefix" -r | sort -u)
+        asn=$(curl -s https://api.bgpview.io/ip/$ip | jq -r ".data.prefixes[] | .asn.asn" -r | sort -u)
+        name=$(curl -s https://api.bgpview.io/asn/$asn | jq -r ".data .name" | sort -u)
         if [ $is_cdn == "0" ]
         then
              is_cdn=true

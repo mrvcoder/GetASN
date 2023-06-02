@@ -100,7 +100,7 @@ done < "$input_file"
 echo $json | jq . > $output_file
 echo $json | jq '{ ".domains": [.domains[] | select(.is_cdn == "false")]}' > $output_file_not_cdn 
 echo $json | jq '.domains | group_by(.asn) | map(select(length > 1) | map(select(.is_cdn == "false"))) | flatten' > $output_file_same_asn
-if [ "$silent" == "1" ]; then
+if [ "$silent" == "0" ]; then
         echo "========================="
         cat $output_file | jq .
         echo "========================="

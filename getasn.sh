@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 
 # Define the options that the script accepts
 options=":shd:"
@@ -75,23 +75,33 @@ while read -r domain; do
   do
         # Check if the IP address is associated with a CDN
         is_cdn=$(echo $ip | cut-cdn -silent -t 3 | wc -l)
-        cidr=$(curl -s https://api.bgpview.io/ip/$ip | jq -r ".data.prefixes[] | .prefix" -r | sort -u)
-        asn=$(curl -s https://api.bgpview.io/ip/$ip | jq -r ".data.prefixes[] | .asn.asn" -r | sort -u)
-        name=$(curl -s https://api.bgpview.io/asn/$asn | jq -r ".data .name" | sort -u)
-        if [ $is_cdn == "0" ]
-        then
-             is_cdn=true
+        preflight=$(curl -s https://api.bgpview.io/ip/$ip  2>&1 | grep -o -P '(HTTP/2 )[0-9]+')
+        if [ "$preflight" = "HTTP/2 429" ]; then
+          sleep 25
         else
-             is_cdn=false
+            cidr=$(curl -s https://api.bgpview.io/ip/$ip  2>&1 | jq -r ".data.prefixes[] | .prefix" -r | sort -u)
+            asn=$(curl -s https://api.bgpview.io/ip/$ip  | jq -r ".data.prefixes[] | .asn.asn" -r | sort -u)
+            name=$(curl -s https://api.bgpview.io/asn/$asn | jq -r ".data .name" | sort -u)
+
+            if [ $is_cdn == "0" ]
+            then
+                  is_cdn=true
+            else
+                  is_cdn=false
+            fi
+
+
+
+            # Append the information to the output file
+            # Add the data to the JSON object
+            json=$(echo $json | jq --arg domain "$domain" --arg ip "$ip" --arg asn "$asn" --arg is_cdn "$is_cdn" --arg cidr "$cidr" --arg name "$name" '.domains += [{"domain":$domain,"ip":$ip,"asn":$asn,"is_cdn":$is_cdn,"cidr":$cidr,"name":$name}]')
         fi
+        
+    
+       
 
-      
-
-        # Append the information to the output file
-        # Add the data to the JSON object
-        json=$(echo $json | jq --arg domain "$domain" --arg ip "$ip" --arg asn "$asn" --arg is_cdn "$is_cdn" --arg cidr "$cidr" --arg name "$name" '.domains += [{"domain":$domain,"ip":$ip,"asn":$asn,"is_cdn":$is_cdn,"cidr":$cidr,"name":$name}]')
   done
-  
+  sleep 5
 done < "$input_file"
 
 

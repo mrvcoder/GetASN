@@ -29,7 +29,7 @@ options:
 Add this code to your `~/.bashrc`
 ```
 getasn() {
-bash {{getasn.sh path}} -d {{GetASN folder path}}/resolvers.txt "$1"
+bash {{getasn.sh path}} -s -d {{GetASN folder path}}/resolvers.txt "$1"
 }
 ```
 1. replace `{{getasn.sh path}}` with path of where is getasn.sh script is

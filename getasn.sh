@@ -75,33 +75,39 @@ while read -r domain; do
   do
         # Check if the IP address is associated with a CDN
         is_cdn=$(echo $ip | cut-cdn -silent -t 3 | wc -l)
-        preflight=$(curl -s https://api.bgpview.io/ip/$ip  2>&1 | grep -o -P '(HTTP/2 )[0-9]+')
-        if [ "$preflight" = "HTTP/2 429" ]; then
-          sleep 25
-        else
-            cidr=$(curl -s https://api.bgpview.io/ip/$ip  2>&1 | jq -r ".data.prefixes[] | .prefix" -r | sort -u)
-            asn=$(curl -s https://api.bgpview.io/ip/$ip  | jq -r ".data.prefixes[] | .asn.asn" -r | sort -u)
-            name=$(curl -s https://api.bgpview.io/asn/$asn | jq -r ".data .name" | sort -u)
+        ok=false
+        while [ "$ok" != "true" ]
+        do
+            preflight=$(curl -v -s https://api.bgpview.io/ip/$ip  2>&1 | grep -o -P '(HTTP/2 )[0-9]+')
+            if [ "$preflight" = "HTTP/2 200" ]; then
+                #echo "sleeping 20s"
+                sleep 20
+                cidr=$(curl -s https://api.bgpview.io/ip/$ip  2>&1 | jq -r ".data.prefixes[] | .prefix" -r | sort -u)
+                asn=$(curl -s https://api.bgpview.io/ip/$ip  | jq -r ".data.prefixes[] | .asn.asn" -r | sort -u)
+                name=$(curl -s https://api.bgpview.io/asn/$asn | jq -r ".data .name" | sort -u)
+                ok=true
 
-            if [ $is_cdn == "0" ]
-            then
-                  is_cdn=true
+                if [ $is_cdn == "0" ]
+                then
+                      is_cdn=true
+                else
+                      is_cdn=false
+                fi
+
+
+
+                # Append the information to the output file
+                # Add the data to the JSON object
+                json=$(echo $json | jq --arg domain "$domain" --arg ip "$ip" --arg asn "$asn" --arg is_cdn "$is_cdn" --arg cidr "$cidr" --arg name "$name" '.domains += [{"domain":$domain,"ip":$ip,"asn":$asn,"is_cdn":$is_cdn,"cidr":$cidr,"name":$name}]')
+            
             else
-                  is_cdn=false
+              #echo "sleeping 4m"
+              sleep 4m
             fi
-
-
-
-            # Append the information to the output file
-            # Add the data to the JSON object
-            json=$(echo $json | jq --arg domain "$domain" --arg ip "$ip" --arg asn "$asn" --arg is_cdn "$is_cdn" --arg cidr "$cidr" --arg name "$name" '.domains += [{"domain":$domain,"ip":$ip,"asn":$asn,"is_cdn":$is_cdn,"cidr":$cidr,"name":$name}]')
-        fi
-        
-    
-       
-
+        done
   done
-  sleep 5
+	  #echo "sleeping 5s"
+  	sleep 5
 done < "$input_file"
 
 

@@ -10,7 +10,7 @@ while getopts "$options" opt; do
   case $opt in
     h ) 
          echo "usage: ./getasn.sh [options] ListOfDomains.txt"
-         echo " -r Set resolvers file address "
+         echo "-r set resolvers file address [ default: ./resolvers.txt ]"
         echo "-s silent output" 
         exit 1
          ;;
@@ -26,6 +26,7 @@ while getopts "$options" opt; do
   esac
 done
 shift $(( OPTIND - 1 ))
+
 
 if [ "$opt_domain" == "" ]; then
    # usage : getasn ListOfDomains.txt
@@ -107,7 +108,7 @@ if [ "$opt_domain" = "" ]; then
                   
                   else
                     sleep 1m
-                  fi
+                fi
               done
         done
           sleep 5
@@ -141,7 +142,7 @@ else
                 # Add the data to the JSON object
                 json=$(echo $json | jq --arg domain "$opt_domain" --arg ip "$ip"  --arg asn "$asn" --arg is_cdn "$is_cdn" --arg cidr "$cidr" --arg name "$name" '.domains += [{"domain":"'"$opt_domain"'","ip":$ip,"asn":$asn,"is_cdn":$is_cdn,"cidr":$cidr,"name":$name}]')
             else
-              sleep 1m
+              sleep 30s
             fi
         done 
     done

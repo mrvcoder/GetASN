@@ -7,29 +7,34 @@
 ## what does this script do?
 this script will give you these infoes :
 - **ASN**: asn number of domain
-- **IP**: IPs of domain (supports ipv4 and ipv6)
+- **IP**:  IPs of domain (supports ipv4 and ipv6)
 - **is_cdn**: is domain behind cdn or not (true or false) 
-- **CIDR**: prefex of ip (cidr)
+- **CIDR**: All prefex of ip (cidr)
 
 And at the end you will get these outputs :
 - The ORGINAL output :  `getasn_output.json`
 - The output which ASNs are equal and is_cdn is false: `getasn_output_SameASN_NotCDN.json`
 - The output which is_cdn is false: `getasn_output_NotCDN.json`
+- Also you can create custom output name with `-o` option :)
 
 ## usage
 ```
-usage: ./getasn.sh [options] ListOfDomains.txt
+usage: ./getasn.sh [options] 
 
 options: 
- -d Set txt resolvers file address 
+ usage: ./getasn.sh [options]
+        -r set resolvers file address [ default: ./resolvers.txt ]
+        -s silent output 
+        -o set output (only .json is ok) 
+        -l set domain list txt file (only .txt is ok) 
 ```
-**It is Important to use options before ListOfDomains file !**
+
 
 ## How to use this script as alias in bash !
 Add this code to your `~/.bashrc`
 ```
 getasn() {
-bash {{getasn.sh path}} -s -d {{GetASN folder path}}/resolvers.txt "$1"
+bash {{getasn.sh path}} -s -d {{GetASN folder path}}/resolvers.txt -l "$1"
 }
 ```
 1. replace `{{getasn.sh path}}` with path of where is getasn.sh script is
@@ -45,6 +50,6 @@ And Only need to pass ListOfDomains file. If you need to change resolvers just g
 
 ## How to use with [notify](https://github.com/projectdiscovery/notify)
 ```
-./getasn.sh -s ListOfDomains.txt | notify -mf "done" -id discord
+./getasn.sh -s -l ListOfDomains.txt | notify -mf "done" -id discord
 ```
 Good luck :)

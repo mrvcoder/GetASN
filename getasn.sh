@@ -40,7 +40,8 @@ if [ "$opt_domainFileList" == "" ]; then
    # usage : getasn ListOfDomains.txt
   if [ "$opt_domainFileList" == "" ]; then
     echo "Error: No input provided."
-    echo "usage: ./getasn.sh [options] ListOfDomains.txt "
+    echo "usage: ./getasn.sh [options] "
+    echo "run with -h for help menu :)"
     exit 1
   fi
   # Check if the file exists

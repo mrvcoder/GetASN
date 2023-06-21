@@ -72,7 +72,7 @@ fi
 # Initialize the JSON object
 json='{"domains":[]}'
 # update cut-cdn providers
-# cut-cdn -ua -silent
+cut-cdn -ua -silent
 
 if [ "$opt_domain" = "" ]; then
       while read -r domain; do

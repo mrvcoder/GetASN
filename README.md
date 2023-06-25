@@ -24,9 +24,12 @@ usage: ./getasn.sh [options]
 options: 
  usage: ./getasn.sh [options]
         -r set resolvers file address [ default: ./resolvers.txt ]
-        -s silent output 
-        -o set output (only .json is ok) 
-        -l set domain list txt file (only .txt is ok) 
+        -s silent output
+        -o set output (only .json is ok)
+        -l set domain list txt file (only .txt is ok)
+        -x set ip list txt file (only .txt is ok)
+        -a check single ip
+        -d check single domain
 ```
 
 

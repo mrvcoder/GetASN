@@ -85,7 +85,7 @@ fi
 isip=false
 isdomain=false
 # update cut-cdn providers
-# cut-cdn -ua -silent
+cut-cdn -ua -silent
 
 if [ "$opt_domainFileList" != "" ] || [ "$opt_domain" != "" ] ; then
     json='{"domains":[]}'

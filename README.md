@@ -11,6 +11,13 @@ this script will give you these infoes :
 - **is_cdn**: is domain behind cdn or not (true or false) 
 - **CIDR**: All prefex of ip (cidr)
 
+**Please note that Script Data Source is [bgpview](https://bgpview.io/) !**
+
+## what input types you can pass ?
+- single/list of IPs
+- single/list of Domains
+- single/list of ASNs
+
 And at the end you will get these outputs :
 - The ORGINAL output :  `getasn_output.json`
 - The output which ASNs are equal and is_cdn is false: `getasn_output_SameASN_NotCDN.json`
@@ -22,37 +29,35 @@ And at the end you will get these outputs :
 usage: ./getasn.sh [options] 
 
 options: 
- usage: ./getasn.sh [options]
-        -r set resolvers file address [ default: ./resolvers.txt ]
-        -s silent output
-        -o set output (only .json is ok)
-        -l set domain list txt file (only .txt is ok)
-        -x set ip list txt file (only .txt is ok)
-        -a check single ip
-        -d check single domain
+        -r                  set resolvers file address [ default: ./resolvers.txt ]
+        -s   -silent        silent output
+        -o                  set output (only .json is ok)
+        -domainlist         set domain list txt file (only .txt is ok)
+        -domain             check single domain
+        -iplist             set ip list txt file (only .txt is ok)
+        -ip                 check single ip
+        -asn                check single asn
+        -asnlist            set asn list txt file (only .txt is ok)
 ```
 
 
 ## How to use this script as alias in bash !
 Add this code to your `~/.bashrc`
 ```
-getasn() {
-bash {{getasn.sh path}} -s -d {{GetASN folder path}}/resolvers.txt -l "$1"
-}
+alias getasn="{{getasn.sh full path}}"
 ```
-1. replace `{{getasn.sh path}}` with path of where is getasn.sh script is
-2. replace `{{GetASN folder path}}` with path of where is GetASN folder 
+1. replace `{{getasn.sh full path}}` with path of where is getasn.sh script is
 save it and the run this code :
 ```
 source ~/.bashrc
 ```
 
-Now you can call getasn script anywhere in bash !
-And Only need to pass ListOfDomains file. If you need to change resolvers just go to project folder and edit `resolvers.txt` file
+Now you can call getasn script anywhere in bash by only calling `getasn` !
+And Only need to pass `[options]` 
 
 
 ## How to use with [notify](https://github.com/projectdiscovery/notify)
 ```
-./getasn.sh -s -l ListOfDomains.txt | notify -mf "done" -id discord
+./getasn.sh -s -domainlist ListOfDomains.txt | notify -mf "done" -id discord
 ```
 Good luck :)

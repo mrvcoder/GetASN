@@ -355,7 +355,6 @@ if [ "$opt_output" == "" ]; then
 
   if [ "$isasn" == "true" ];then
     json=$(echo $json | sed '${s/,$//}' )
-    echo "$json }}"
     echo "$json }}" | jq . > $output_file
   fi
 

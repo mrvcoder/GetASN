@@ -1,5 +1,5 @@
 ## Tools/Commands need to be installed in your machine
-**Install this tools before running script !**
+**Install these tools before running script !**
 | tool | README |
 | ------ | ------ |
 | cut-cdn | [https://github.com/ImAyrix/cut-cdn] |

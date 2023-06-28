@@ -9,7 +9,7 @@
 this script will give you these infoes :
 - **ASN**: asn number of domain
 - **IP**:  IPs of domain (supports ipv4 and ipv6)
-- **is_cdn**: is domain behind cdn or not (true or false) 
+- **is_cdn**: is domain/IP behind cdn or not (true or false) 
 - **CIDR**: All prefex of ip (cidr)
 
 **Please note that Script Data Source is [bgpview](https://bgpview.io/) !**

@@ -28,12 +28,10 @@ while [[ $# -gt 0 ]]; do
         echo "-asnlist            set asn list txt file (only .txt is ok)" 
         exit 1
          ;;
-    -s ) 
-        shift
+    -s )
         silent="1"
         ;;
-    -silent ) 
-        shift
+    -silent )
         silent="1"
         ;;
     -r ) 

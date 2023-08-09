@@ -14,7 +14,7 @@ this script will give you these infoes :
 
 **Please note that Script Data Source is [bgpview](https://bgpview.io/) !**
 
-## what input types you can pass ?
+## what input types can you pass ?
 - single/list of IPs
 - single/list of Domains
 - single/list of ASNs

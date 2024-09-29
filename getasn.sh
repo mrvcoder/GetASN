@@ -1,5 +1,5 @@
 #!/bin/bash 
-
+ 
 # Define the options that the script accepts
 options=":shr:a:x:o:l:d:"
 silent="0"

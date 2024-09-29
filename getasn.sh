@@ -145,6 +145,7 @@ if [ "$opt_domainFileList" != "" ] || [ "$opt_domain" != "" ] ; then
                      
                       cidr=$(echo $resdata | jq -r ".data.prefixes[] | .prefix" -r | sort -u)
                       asn=$(echo $resdata  | jq -r ".data.prefixes[] | .asn.asn" -r | sort -u)
+                      sleep 10s
                       name=$(curl -s https://api.bgpview.io/asn/$asn | jq -r ".data .name" | sort -u)
                       ok=true
 
@@ -180,12 +181,13 @@ if [ "$opt_domainFileList" != "" ] || [ "$opt_domain" != "" ] ; then
                 preflight=$(curl -v -s https://api.bgpview.io/ip/$ip  2>&1)
                 httpResp=$(echo $preflight | grep -o -P '(HTTP/2 )[0-9]+')
                 if [ "$httpResp" = "HTTP/2 200" ]; then
-                    sleep 20
+                    sleep 20s
 
                     resdata=$(curl -s https://api.bgpview.io/ip/$ip)
 
                     cidr=$(echo $resdata | jq -r ".data.prefixes[] | .prefix" -r | sort -u)
                     asn=$(echo $resdata | jq -r ".data.prefixes[] | .asn.asn" -r | sort -u)
+                    sleep 10s
                     name=$(curl -s https://api.bgpview.io/asn/$asn | jq -r ".data .name" | sort -u)
                     ok=true
 
@@ -229,6 +231,7 @@ if [ "$opt_ipFileList" != "" ] || [ "$opt_ip" != "" ] ; then
                   
                   cidr=$(echo $resdata | jq -r ".data.prefixes[] | .prefix" -r | sort -u)
                   asn=$(echo $resdata  | jq -r ".data.prefixes[] | .asn.asn" -r | sort -u)
+                  sleep 10s
                   name=$(curl -s https://api.bgpview.io/asn/$asn | jq -r ".data .name" | sort -u)
                   ok=true
 
@@ -257,11 +260,12 @@ if [ "$opt_ipFileList" != "" ] || [ "$opt_ip" != "" ] ; then
           preflight=$(curl -v -s https://api.bgpview.io/ip/$opt_ip  2>&1)
           httpResp=$(echo $preflight | grep -o -P '(HTTP/2 )[0-9]+')
           if [ "$httpResp" = "HTTP/2 200" ]; then
-              sleep 20
+              sleep 20s
 
               resdata=$(curl -s https://api.bgpview.io/ip/$opt_ip)
               cidr=$(echo $resdata | jq -r ".data.prefixes[] | .prefix" -r | sort -u)
               asn=$(echo $resdata | jq -r ".data.prefixes[] | .asn.asn" -r | sort -u)
+              sleep 10s
               name=$(curl -s https://api.bgpview.io/asn/$asn | jq -r ".data .name" | sort -u)
               ok=true
 
